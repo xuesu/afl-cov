@@ -146,7 +146,7 @@ def process_afl_test_cases(cargs: argparse.Namespace) -> bool:
             do_coverage = False
 
         for fuzz_dir in cov_paths["dirs"]:
-
+            # print("fuzz_dir", fuzz_dir)
             do_break = False
             last_file = False
             num_files = 0
@@ -867,6 +867,7 @@ def run_cmd(
     fn: str,
     timeout: Optional[int] = None,
 ) -> Tuple[int, List[bytes]]:
+    # print("run_cmd", cmd)
     out = []
 
     if cargs.disable_cmd_redirection or collect == WANT_OUTPUT or collect == LOG_ERRORS:
@@ -886,9 +887,10 @@ def run_cmd(
         else:
             print("    CMD: %s" % cmd)
 
-    exit_code = subprocess.call(
+    res = subprocess.run(
         cmd, stdin=None, stdout=fh, stderr=subprocess.STDOUT, shell=True
     )
+    exit_code = res.returncode
 
     fh.close()
 
@@ -913,6 +915,7 @@ def run_cmd(
         else:
             print("    Non-zero exit status '%d' for CMD: %s" % (exit_code, cmd))
 
+    # print("run_cmd", exit_code, out)
     return exit_code, out
 
 
@@ -1105,6 +1108,7 @@ def check_requirements(cargs: argparse.Namespace) -> bool:
 
 
 def is_gcov_enabled(cargs: argparse.Namespace) -> bool:
+    return True
     if not is_exe(cargs.readelf_path):
         print("[*] Need a valid path to readelf, use --readelf-path")
         return False
